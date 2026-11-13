@@ -1,25 +1,47 @@
-### 1. Create a user → expect 201
-POST http://localhost:3000/api/users
+@baseUrl = http://localhost:3000/api
+
+### 1. Bob s'inscrit et ESSAIE de se mettre admin → 201, role doit rester "user"
+POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-  "email": "alice@test.com",
+  "email": "bob@test.com",
   "password": "Secret123!",
-  "firstname": "Alice",
-  "lastname": "Martin"
+  "firstname": "Bob",
+  "role": "admin"
 }
 
-### 2. List users → expect 200 + a list
-GET http://localhost:3000/api/users
-
-### 3. Get one user → expect 200
-GET http://localhost:3000/api/users/1
-
-### 4. Invalid email → expect 422
-POST http://localhost:3000/api/users
+### 2. Login avec un mauvais mot de passe → 401
+POST {{baseUrl}}/login
 Content-Type: application/json
 
-{
-  "email": "not-an-email",
-  "password": "x"
-}
+{ "email": "bob@test.com", "password": "mauvais" }
+
+### 3. Login de Bob → 200 + token
+# @name loginBob
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{ "email": "bob@test.com", "password": "Secret123!" }
+
+### 4. Qui suis-je ? (token de Bob) → 200, Bob
+GET {{baseUrl}}/me
+Authorization: Bearer {{loginBob.response.body.token}}
+
+### 5. Qui suis-je ? SANS token → 401
+GET {{baseUrl}}/me
+
+### 6. Bob essaie de lister les users → 403
+GET {{baseUrl}}/users
+Authorization: Bearer {{loginBob.response.body.token}}
+
+### 7. Login d'Alice (admin) → 200 + token
+# @name loginAlice
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{ "email": "alice@test.com", "password": "Secret123!" }
+
+### 8. Alice liste les users → 200
+GET {{baseUrl}}/users
+Authorization: Bearer {{loginAlice.response.body.token}}
