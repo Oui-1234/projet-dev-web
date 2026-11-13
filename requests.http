@@ -1,0 +1,25 @@
+### 1. Create a user → expect 201
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "email": "alice@test.com",
+  "password": "Secret123!",
+  "firstname": "Alice",
+  "lastname": "Martin"
+}
+
+### 2. List users → expect 200 + a list
+GET http://localhost:3000/api/users
+
+### 3. Get one user → expect 200
+GET http://localhost:3000/api/users/1
+
+### 4. Invalid email → expect 422
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "email": "not-an-email",
+  "password": "x"
+}
