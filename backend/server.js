@@ -2,6 +2,8 @@ import express from "express";
 import apiRouter from "./routes/api.js";
 import connection from "./models/db.js";
 import User from "./models/user.js";
+import Category from "./models/category.js";
+import Equipment from "./models/equipment.js";
 
 const app = express();
 
