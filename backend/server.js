@@ -4,6 +4,7 @@ import connection from "./models/db.js";
 import User from "./models/user.js";
 import Category from "./models/category.js";
 import Equipment from "./models/equipment.js";
+import UsageLog from "./models/usageLog.js";
 
 const app = express();
 
