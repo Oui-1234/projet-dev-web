@@ -45,3 +45,75 @@ Content-Type: application/json
 ### 8. Alice liste les users → 200
 GET {{baseUrl}}/users
 Authorization: Bearer {{loginAlice.response.body.token}}
+
+###
+// categories liste publique
+GET {{baseUrl}}/categories
+
+###
+// categories creation refusee user
+POST {{baseUrl}}/categories
+Authorization: Bearer {{loginBob.response.body.token}}
+Content-Type: application/json
+
+{ "name": "Audio" }
+
+###
+// categories creation admin
+POST {{baseUrl}}/categories
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "name": "Audio", "description": "Micros, enceintes" }
+
+###
+// categories nom manquant
+POST {{baseUrl}}/categories
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "description": "pas de nom" }
+
+###
+// equipments creation admin
+POST {{baseUrl}}/equipments
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "name": "Micro Shure SM58", "categoryId": 1 }
+
+###
+// equipments statut invalide
+POST {{baseUrl}}/equipments
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "name": "Projecteur", "status": "broken" }
+
+###
+// equipments liste avec categorie
+GET {{baseUrl}}/equipments
+
+###
+// equipments filtre et tri
+GET {{baseUrl}}/equipments?status=available&sort=-name
+
+###
+// equipments modification refusee user
+PATCH {{baseUrl}}/equipments/1
+Authorization: Bearer {{loginBob.response.body.token}}
+Content-Type: application/json
+
+{ "status": "retired" }
+
+###
+// equipments modification admin
+PATCH {{baseUrl}}/equipments/1
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "status": "maintenance" }
+
+###
+// equipments id inexistant
+GET {{baseUrl}}/equipments/999
