@@ -117,3 +117,54 @@ Content-Type: application/json
 ###
 // equipments id inexistant
 GET {{baseUrl}}/equipments/999
+
+###
+// usage-logs sans token
+GET {{baseUrl}}/usage-logs
+
+###
+// usage-logs lecture refusee user
+GET {{baseUrl}}/usage-logs
+Authorization: Bearer {{loginBob.response.body.token}}
+
+###
+// usage-logs creation admin
+POST {{baseUrl}}/usage-logs
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "type": "maintenance", "notes": "Grille du micro changée", "equipmentId": 1, "userId": 2 }
+
+###
+// usage-logs type invalide
+POST {{baseUrl}}/usage-logs
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "type": "lost", "equipmentId": 1 }
+
+###
+// usage-logs equipement manquant
+POST {{baseUrl}}/usage-logs
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "type": "repair" }
+
+###
+// usage-logs historique equipement 1
+GET {{baseUrl}}/usage-logs?equipmentId=1&sort=-date
+Authorization: Bearer {{loginAlice.response.body.token}}
+
+###
+// usage-logs modification notes
+PATCH {{baseUrl}}/usage-logs/1
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "notes": "Grille et câble changés" }
+
+###
+// usage-logs suppression id inexistant
+DELETE {{baseUrl}}/usage-logs/999
+Authorization: Bearer {{loginAlice.response.body.token}}
