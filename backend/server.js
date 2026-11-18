@@ -5,6 +5,7 @@ import User from "./models/user.js";
 import Category from "./models/category.js";
 import Equipment from "./models/equipment.js";
 import UsageLog from "./models/usageLog.js";
+import Reservation from "./models/reservation.js";
 
 const app = express();
 

@@ -6,10 +6,12 @@ import equipmentRouter from "./equipment.js";
 import usageLogRouter from "./usageLog.js";
 import checkAuth from "../middlewares/checkAuth.js";
 import checkRole from "../middlewares/checkRole.js";
+import reservationRouter from "./reservation.js";
 
 const router = new Router();
 
 router.use('/users', checkAuth, checkRole("admin"), userRouter);
+router.use('/reservations', checkAuth, reservationRouter);
 router.use(securityRouter);
 router.use('/categories', categoryRouter);
 router.use('/equipments', equipmentRouter);

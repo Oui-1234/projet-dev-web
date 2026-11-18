@@ -168,3 +168,121 @@ Content-Type: application/json
 // usage-logs suppression id inexistant
 DELETE {{baseUrl}}/usage-logs/999
 Authorization: Bearer {{loginAlice.response.body.token}}
+
+
+### ===== ÉTAPE 5 =====
+
+### 5.0 L'admin remet l'équipement 1 en "available" (le test 4.10 l'avait mis en maintenance) → 200
+PATCH {{baseUrl}}/equipments/1
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "status": "available" }
+
+### 5.1 Carol s'inscrit → 201 (la 1re fois seulement)
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{ "email": "carol@test.com", "password": "Secret123!", "firstname": "Carol" }
+
+### 5.2 Login de Carol → 200 + token
+# @name loginCarol
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{ "email": "carol@test.com", "password": "Secret123!" }
+
+### 5.3 Sans token → 401
+GET {{baseUrl}}/reservations
+
+### 5.4 Bob réserve l'équipement 1 et ESSAIE de mettre userId et status → 201, "pending", userId = celui de Bob
+# @name bobResa
+POST {{baseUrl}}/reservations
+Authorization: Bearer {{loginBob.response.body.token}}
+Content-Type: application/json
+
+{ "equipmentId": 1, "startDate": "2026-12-01", "endDate": "2026-12-05", "userId": 1, "status": "approved" }
+
+### 5.5 Carol veut le même équipement sur des dates qui chevauchent → 409
+POST {{baseUrl}}/reservations
+Authorization: Bearer {{loginCarol.response.body.token}}
+Content-Type: application/json
+
+{ "equipmentId": 1, "startDate": "2026-12-04", "endDate": "2026-12-08" }
+
+### 5.6 Carol réserve juste après → 201
+# @name carolResa
+POST {{baseUrl}}/reservations
+Authorization: Bearer {{loginCarol.response.body.token}}
+Content-Type: application/json
+
+{ "equipmentId": 1, "startDate": "2026-12-06", "endDate": "2026-12-08", "comment": "Pour un concert" }
+
+### 5.7 Dates inversées → 422
+POST {{baseUrl}}/reservations
+Authorization: Bearer {{loginCarol.response.body.token}}
+Content-Type: application/json
+
+{ "equipmentId": 1, "startDate": "2027-01-10", "endDate": "2027-01-01" }
+
+### 5.8 Bob liste en demandant celles de Carol → 200, mais SEULEMENT les siennes
+GET {{baseUrl}}/reservations?userId={{carolResa.response.body.userId}}
+Authorization: Bearer {{loginBob.response.body.token}}
+
+### 5.9 L'admin liste tout → 200, celles de Bob ET de Carol
+GET {{baseUrl}}/reservations
+Authorization: Bearer {{loginAlice.response.body.token}}
+
+### 5.10 Bob essaie de voir la réservation de Carol → 404
+GET {{baseUrl}}/reservations/{{carolResa.response.body.id}}
+Authorization: Bearer {{loginBob.response.body.token}}
+
+### 5.11 Bob essaie d'approuver sa propre réservation → 403
+PATCH {{baseUrl}}/reservations/{{bobResa.response.body.id}}
+Authorization: Bearer {{loginBob.response.body.token}}
+Content-Type: application/json
+
+{ "status": "approved" }
+
+### 5.12 Bob essaie d'annuler celle de Carol → 404
+PATCH {{baseUrl}}/reservations/{{carolResa.response.body.id}}
+Authorization: Bearer {{loginBob.response.body.token}}
+Content-Type: application/json
+
+{ "status": "cancelled" }
+
+### 5.13 L'admin approuve celle de Bob → 200
+PATCH {{baseUrl}}/reservations/{{bobResa.response.body.id}}
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "status": "approved" }
+
+### 5.14 L'admin essaie de la remettre en attente → 422 (transition interdite)
+PATCH {{baseUrl}}/reservations/{{bobResa.response.body.id}}
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "status": "pending" }
+
+### 5.15 L'admin la marque comme rendue → 200
+PATCH {{baseUrl}}/reservations/{{bobResa.response.body.id}}
+Authorization: Bearer {{loginAlice.response.body.token}}
+Content-Type: application/json
+
+{ "status": "returned" }
+
+### 5.16 Carol annule la sienne → 200
+PATCH {{baseUrl}}/reservations/{{carolResa.response.body.id}}
+Authorization: Bearer {{loginCarol.response.body.token}}
+Content-Type: application/json
+
+{ "status": "cancelled" }
+
+### 5.17 Bob essaie de supprimer → 403
+DELETE {{baseUrl}}/reservations/{{carolResa.response.body.id}}
+Authorization: Bearer {{loginBob.response.body.token}}
+
+### 5.18 L'admin supprime → 204
+DELETE {{baseUrl}}/reservations/{{carolResa.response.body.id}}
+Authorization: Bearer {{loginAlice.response.body.token}}
