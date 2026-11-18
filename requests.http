@@ -286,3 +286,19 @@ Authorization: Bearer {{loginBob.response.body.token}}
 ### 5.18 L'admin supprime → 204
 DELETE {{baseUrl}}/reservations/{{carolResa.response.body.id}}
 Authorization: Bearer {{loginAlice.response.body.token}}
+
+
+### ===== ÉTAPE 7 =====
+
+### 7.1 CORS → 200, et dans les headers de la réponse : Access-Control-Allow-Origin: *
+GET {{baseUrl}}/categories
+Origin: http://localhost:5173
+
+### 7.2a Id invalide → 500 avec juste "Internal Server Error" (plus de trace)
+GET {{baseUrl}}/equipments/abc
+
+### 7.2b JSON mal formé (virgule en trop) → 400 avec juste "Bad Request"
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{ "email": "bob@test.com", }

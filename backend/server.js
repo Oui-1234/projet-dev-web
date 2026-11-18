@@ -6,8 +6,10 @@ import Category from "./models/category.js";
 import Equipment from "./models/equipment.js";
 import UsageLog from "./models/usageLog.js";
 import Reservation from "./models/reservation.js";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 
@@ -19,6 +21,11 @@ app.get('/healthz', (req, res) => {
 });
 
 app.use("/api", apiRouter);
+
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.sendStatus(err.status || 500);
+});
 
 await connection.sync({ alter: true });
 
