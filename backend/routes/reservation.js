@@ -16,7 +16,7 @@ const transitions = {
 
 
 router.get('', async (req, res) => {
-    const { page, itemsPerPage, sort, ...filters } = req.query;
+    const { page, itemsPerPage=10, sort, ...filters } = req.query;
     const otherParams = {};
 
     if (page) {
@@ -70,10 +70,8 @@ router.post('', async (req, res) => {
         await reservation.save();
         res.status(201).json(reservation);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-            // invalidKey : [ "message 1", "message 2"]
-        });
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
         }else {
             console.error(error);
             res.sendStatus(500);

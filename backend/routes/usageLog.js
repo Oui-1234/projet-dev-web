@@ -11,7 +11,7 @@ const includes = [
 ];
 
 router.get('', async (req, res) => {
-    const { page, itemsPerPage, sort, ...filters } = req.query;
+    const { page, itemsPerPage=10, sort, ...filters } = req.query;
     const otherParams = {};
 
     if (page) {
@@ -47,9 +47,9 @@ router.post('', async (req, res) => {
         });
         res.status(201).json(usageLog);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-            });
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
+
         } else {
             console.error(error);
             res.sendStatus(500);
@@ -78,9 +78,9 @@ router.patch('/:id', async (req, res) => {
         if (!usageLog) return res.sendStatus(404);
         res.json(usageLog);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-            });
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
+
         } else {
             console.error(error);
             res.sendStatus(500);

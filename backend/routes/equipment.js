@@ -7,7 +7,7 @@ import checkRole from "../middlewares/checkRole.js";
 const router = new Router();
 
 router.get('', async (req, res) => {
-    const { page, itemsPerPage, sort, ...filters } = req.query;
+    const { page, itemsPerPage=10, sort, ...filters } = req.query;
     const otherParams = {};
 
     if (page) {
@@ -35,9 +35,9 @@ router.post('', checkAuth, checkRole("admin"), async (req, res) => {
         const equipment = await Equipment.create(req.body);
         res.status(201).json(equipment);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-            });
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
+
         } else {
             console.error(error);
             res.sendStatus(500);
@@ -65,9 +65,9 @@ router.patch('/:id', checkAuth, checkRole("admin"), async (req, res) => {
         if (!equipment) return res.sendStatus(404);
         res.json(equipment);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-            });
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
+
         } else {
             console.error(error);
             res.sendStatus(500);

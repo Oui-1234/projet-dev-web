@@ -5,7 +5,7 @@ const router = new Router();
 
 // CGET => collection get => listing
 router.get('', async (req, res) => {
-    const { page, itemsPerPage, sort, ...filters } = req.query;
+    const { page, itemsPerPage=10, sort, ...filters } = req.query;
     const otherParams = {};
 
     if (page) {
@@ -33,11 +33,9 @@ router.post('', async (req, res) => {
         const user = await User.create(req.body);
         res.status(201).json(user);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-                // à remplir
-                // invalidKey : [ "message 1", "message 2"]
-            });
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
+
         } else {
             console.error(error);
             res.sendStatus(500);
@@ -68,11 +66,9 @@ router.patch('/:id', async (req, res) => {
         if (!user) return res.sendStatus(404);
         res.json(user);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-                // à remplir
-                // invalidKey : [ "message 1", "message 2"]
-            });
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
+
         } else {
             console.error(error);
             res.sendStatus(500);

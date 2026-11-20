@@ -12,10 +12,9 @@ router.post("/register", async (req, res) => {
         const user = await User.create({ email, password, firstname, lastname });
         res.status(201).json(user);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-                message: error.message
-            });
+       
+    if (validationErrorNames.includes(error.name)) {
+        res.status(422).json(formatErrors(error));
         } else {
             console.error(error);
             res.sendStatus(500);

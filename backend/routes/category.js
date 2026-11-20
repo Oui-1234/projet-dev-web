@@ -2,11 +2,11 @@ import { Router } from "express";
 import Category from "../models/category.js";
 import checkAuth from "../middlewares/checkAuth.js";
 import checkRole from "../middlewares/checkRole.js";
-
+import Erreurs from "../utils/erreurs.js";
 const router = new Router();
 
 router.get('', async (req, res) => {
-    const { page, itemsPerPage, sort, ...filters } = req.query;
+    const { page, itemsPerPage=10, sort, ...filters } = req.query;
     const otherParams = {};
 
     if (page) {
@@ -33,9 +33,10 @@ router.post('', checkAuth, checkRole("admin"), async (req, res) => {
         const category = await Category.create(req.body);
         res.status(201).json(category);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-            });
+    
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
+
         } else {
             console.error(error);
             res.sendStatus(500);
@@ -63,9 +64,9 @@ router.patch('/:id', checkAuth, checkRole("admin"), async (req, res) => {
         if (!category) return res.sendStatus(404);
         res.json(category);
     } catch (error) {
-        if (error.name === "SequelizeValidationError") {
-            res.status(422).json({
-            });
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
+
         } else {
             console.error(error);
             res.sendStatus(500);
