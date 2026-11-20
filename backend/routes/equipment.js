@@ -3,7 +3,7 @@ import Equipment from "../models/equipment.js";
 import Category from "../models/category.js";
 import checkAuth from "../middlewares/checkAuth.js";
 import checkRole from "../middlewares/checkRole.js";
-import formatErrors, { validationEroorNames } from "../outils/Erreurs.js";
+import formatErrors, { validationErrorNames } from "../outils/Erreurs.js";
 
 const router = new Router();
 

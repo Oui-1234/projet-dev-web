@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
 import checkAuth from "../middlewares/checkAuth.js";
-import formatErrors, { validationEroorNames } from "../outils/Erreurs.js";
+import formatErrors, { validationErrorNames } from "../outils/Erreurs.js";
 
 const router = new Router();
 
@@ -13,14 +13,13 @@ router.post("/register", async (req, res) => {
         const user = await User.create({ email, password, firstname, lastname });
         res.status(201).json(user);
     } catch (error) {
-       
-    if (validationErrorNames.includes(error.name)) {
-        res.status(422).json(formatErrors(error));
+        if (validationErrorNames.includes(error.name)) {
+            res.status(422).json(formatErrors(error));
         } else {
             console.error(error);
             res.sendStatus(500);
         }
-            }
+    }
 });
 
 router.post("/login", async (req, res) => {

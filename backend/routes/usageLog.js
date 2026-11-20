@@ -2,7 +2,7 @@ import { Router } from "express";
 import UsageLog from "../models/usageLog.js";
 import Equipment from "../models/equipment.js";
 import User from "../models/user.js";
-import formatErrors, { validationEroorNames } from "../outils/Erreurs.js";
+import formatErrors, { validationErrorNames } from "../outils/Erreurs.js";
 
 const router = new Router();
 
