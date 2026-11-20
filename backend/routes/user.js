@@ -1,5 +1,6 @@
 import { Router } from "express";
 import User from "../models/user.js";
+import formatErrors, { validationEroorNames } from "../outils/Erreurs.js";
 
 const router = new Router();
 

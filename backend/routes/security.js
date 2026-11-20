@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
 import checkAuth from "../middlewares/checkAuth.js";
+import formatErrors, { validationEroorNames } from "../outils/Erreurs.js";
 
 const router = new Router();
 
