@@ -1,41 +1,34 @@
 import { useState } from "react";
 import Button from "../components/Button";
+import apiFetch from "../api";
 
 export default function LoginForm({ onLogin }) {
-    const [errors, setErrors] = useState({
-        email: "",
-        password: ""
-    });
+    const [error, setError] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     function handleSubmit(event) {
         event.preventDefault();
-        if (!email.includes("@")) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                email: "must include @"
-            }));
-        }
-        fetch("http://localhost:3000/api/security/login", {
+        setError("");
+        
+        apiFetch("/login", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username: email,
-                password
-            })
+            body: JSON.stringify({ email, password }),
         })
-            .then(resp => resp.json())
-            .then(data => onLogin(data.token));
-
+            .then((resp) => {
+                if (resp.status === 401) throw new Error("Identifiants invalides");
+                if (!resp.ok) throw new Error("Email et mot de passe requis");
+                return resp.json();
+            }
+            )
+            .then(data => onLogin(data.token))
+            .catch((error) => setError(error.message));
     }
 
     return <form onSubmit={handleSubmit}>
-        <input value={email} onChange={(event) => setEmail(event.currentTarget.value)} />
-        {errors.email}
-        <input value={password} onChange={(event) => setPassword(event.currentTarget.value)} />
-        {errors.password}
+        <h2>Connexion </h2>
+        <input type="email" placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
+        <input type="password" placeholder="Mot de passe" value={password} onChange={(event) => setPassword(event.target.value)} />
+        {error && <p className="error">{error}</p>}
         <Button content="Se connecter" />
-    </form>
+       </form>
 }

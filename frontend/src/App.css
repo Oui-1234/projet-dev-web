@@ -40,3 +40,22 @@
 .read-the-docs {
   color: #888;
 }
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 320px;
+    margin: 1em auto;
+}
+
+input,select,textarea {
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+.error {
+    color: #e5484d;
+    margin: 0;
+}

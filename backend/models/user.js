@@ -23,6 +23,7 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
+            notEmpty: true,
         }
     },
     lastname: DataTypes.STRING,
