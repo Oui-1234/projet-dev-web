@@ -59,3 +59,19 @@ input,select,textarea {
     color: #e5484d;
     margin: 0;
 }
+
+.menu{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.menu .active {
+    border-color: #646cff;
+}
+
+.menu-user {
+    margin-left: auto;
+}
