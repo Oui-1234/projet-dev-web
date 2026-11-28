@@ -75,3 +75,63 @@ input,select,textarea {
 .menu-user {
     margin-left: auto;
 }
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.5rem;
+    border-bottom: 1px solid #8884;
+    text-align: left;
+}
+
+.data-table td .button {
+    padding: 0.3em 0.7em;
+    margin-right: 0.3rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background: #242424;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.modal .button {
+    margin: 0 0.3rem;
+}
+
+.danger {
+    background-color: #e5484d;
+    color: white;
+}
+
+@media (prefers-color-scheme: light) {
+    .modal {
+        background: #ffffff;
+    }
+}
